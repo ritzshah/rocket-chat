@@ -12,6 +12,30 @@ spec:
       storage: 10Gi
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rocketchat-data-claim1
+  namespace: rocket-chat
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rocketchat-data-claim2
+  namespace: rocket-chat
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi      
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: rocket-chat-db
@@ -55,7 +79,7 @@ spec:
         failurePolicy: ignore
         execNewPod:
           volumes:
-            - rocketchat-data-vol
+            - rocketchat-data-vol1
           containerName: rocketchat-db
           command:
             - /bin/sh
@@ -74,16 +98,19 @@ spec:
             - -c 
             - mongod --bind_ip 0.0.0.0 --port 27017 --smallfiles --oplogSize 128 --replSet rs0 --storageEngine=mmapv1
           volumeMounts:
-            - name: rocketchat-data-vol
+            - name: rocketchat-data-vol2
               mountPath: /data/db
           ports:
             - containerPort: 27017
               protocol: TCP
       restartPolicy: Always
       volumes:
-        - name: rocketchat-data-vol
+        - name: rocketchat-data-vol1
           persistentVolumeClaim:
-            claimName: rocketchat-data-claim
+            claimName: rocketchat-data-claim1
+        - name: rocketchat-data-vol2
+          persistentVolumeClaim:
+            claimName: rocketchat-data-claim2
 ---
 kind:     DeploymentConfig
 apiVersion:  apps.openshift.io/v1
