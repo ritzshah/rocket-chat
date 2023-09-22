@@ -136,6 +136,14 @@ spec:
               value: "mongodb://rocket-chat-db:27017/rocketchat"
             - name: MONGO_OPLOG_URL
               value: "mongodb://rocket-chat-db:27017/local"
+            - name: PORT
+              value: "3000"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASS
+              value: "admin"
+            - name: ADMIN_EMAIL
+              value: "admin@example.com" 
           ports:
             - containerPort: 3000
               protocol: TCP
